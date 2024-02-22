@@ -7,25 +7,110 @@ type FileData = {
     size: number
 };
 
+/* Helper functions */
+
+/**
+ * Create a tree structure for all files
+ */
+function filesTree(files: FileData[]): Map<number, FileData[]> {
+    const tree = new Map<number, FileData[]>();
+
+    files.forEach(file => {
+        if (file.parent === -1 && !tree.has(file.id)) { // root files
+            tree.set(file.id, []);
+        } else {
+            if (!tree.has(file.parent)) {
+                tree.set(file.parent, [])
+            }
+            tree.get(file.parent)?.push(file) 
+        }
+    })
+
+    return tree;
+}
+
+/**
+ * Calculates the total size of a file, including all its children files
+ */
+function totalSize(file: FileData, tree: Map<number, FileData[]>): number {
+    let total = 0;
+
+    total += file.size;
+    const children = tree.get(file.id) || [];
+    children.forEach(child => {
+        total += totalSize(child, tree);
+    });
+
+    return total;
+}
+
+
 /**
  * Task 1
  */
 function leafFiles(files: FileData[]): string[] {
-    return [];
+    const parents = new Set<number>();
+    const leaves: string[] = []
+    
+    files.forEach(file => parents.add(file.parent))
+    files.forEach(file => {
+        if (!parents.has(file.id)) {
+            leaves.push(file.name);
+        }
+    });
+
+    // Another approach is to use tree helper function:
+
+    // const tree = filesTree(files);
+    // files.forEach(file => {
+    //     const children = tree.get(file.id)
+    //     if (children === undefined || children.length === 0) {
+    //         leaves.push(file.name);
+    //     }
+    // })
+    
+    return leaves;
 }
 
 /**
  * Task 2
  */
 function kLargestCategories(files: FileData[], k: number): string[] {
-    return [];
+    const filesMap = new Map<string, number>();
+
+    files.forEach(file => {
+        file.categories.forEach(category => {
+            // if category exists then current no. of files + 1
+            // else set new category in map
+            const curr = filesMap.get(category) || 0;
+            filesMap.set(category, curr + 1);
+        });
+    });
+
+    const sortedCategories = Array.from(filesMap)
+        .sort(([c1, n1], [c2, n2]) => n2 - n1 || c1.localeCompare(c2))
+        .slice(0, k)
+        .map(([category]) => category);
+
+    return sortedCategories;
 }
 
 /**
  * Task 3
  */
 function largestFileSize(files: FileData[]): number {
-    return 0;
+    if (files.length === 0) return 0;
+
+    const tree = filesTree(files);
+    let largest = 0;
+    files.forEach(file => {
+        const size = totalSize(file, tree);
+        if (size > largest) {
+            largest = size
+        }
+    })
+
+    return largest;
 }
 
 
