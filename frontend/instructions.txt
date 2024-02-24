@@ -1,2 +1,5 @@
 Please detail the instructions to view your solution here:
 
+run ``npm start`` and it should work!
+didn't get to the course cards part, but did try stretch task 1 :)
+thanks for reviewing!
