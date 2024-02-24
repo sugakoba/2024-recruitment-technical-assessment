@@ -1,5 +1,7 @@
 Please detail the instructions to view your solution here:
 
-run ``npm start`` and it should work!
+run ``npm start`` in frontend directory and it should work!
 didn't get to the course cards part, but did try stretch task 1 :)
 thanks for reviewing!
+
+(in case npm does not work properly - here is a codesandbox link: https://cm8ddq-5173.csb.app/)
